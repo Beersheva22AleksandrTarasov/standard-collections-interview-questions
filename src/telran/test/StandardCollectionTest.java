@@ -44,31 +44,24 @@ class StandardCollectionTest {
 	}
 
 	@Test
-	@Disabled
 	void displayDigitStatistics() {
 		// Generate 1000000 random numbers [1-Integer.MAX_VALUE)
 		// Display digits and counts of their occurrences in descending order of the
 		// counts
 		// consider using flatMap for getting many from one
 
-		List<Integer> numbers = new ArrayList<>();
-		
-		for (int i = 0; i < 100; i++) {
-			numbers.add((int) (Math.random() * (Integer.MAX_VALUE - 1) + 1));
-		}
-		
-		
-		numbers.stream().collect(Collectors.groupingBy(s -> s, Collectors.counting())).entrySet().stream()
-		.sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
-		.forEach(e -> System.out.printf("%s: %d\n", e.getKey(), e.getValue()));
-	
+		new Random().ints(1_000_000, 1, Integer.MAX_VALUE).flatMap(digit -> Integer.toString(digit).chars()).boxed()
+				.collect(Collectors.groupingBy(digit -> digit, Collectors.counting())).entrySet().stream()
+				.sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+				.forEach(e -> System.out.printf("%c: %d\n", e.getKey(), e.getValue()));
+
 	}
-	
+
 	@Test
 	void stackIntTest() throws Exception {
 		StackInt numbers = new StackInt();
 		assertTrue(numbers.isEmpty());
-		assertThrowsExactly(EmptyStackException.class, () -> numbers.pop());
+		assertThrowsExactly(NoSuchElementException.class, () -> numbers.pop());
 		numbers.push(0);
 		numbers.push(100);
 		numbers.push(500);
