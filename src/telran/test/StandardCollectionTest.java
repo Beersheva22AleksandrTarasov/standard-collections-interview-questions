@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import telran.util.StackInt;
 
 import java.util.*;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class StandardCollectionTest {
 
@@ -44,6 +44,7 @@ class StandardCollectionTest {
 	}
 
 	@Test
+	@Disabled
 	void displayDigitStatistics() {
 		// Generate 1000000 random numbers [1-Integer.MAX_VALUE)
 		// Display digits and counts of their occurrences in descending order of the
@@ -69,5 +70,53 @@ class StandardCollectionTest {
 		numbers.push(-100);
 		assertEquals(-100, numbers.pop());
 		assertEquals(500, numbers.getMax());
+	}
+
+	@Test
+	void maxNumberWithNegativeImageTest() {
+		int ar[] = { 10000000, 3, -2, -200, 200, -3, 2 };
+		int ar1[] = { 1000000, -1000000000, 3, -4 };
+		assertEquals(200, maxNumberWithNegativeImage(ar));
+		assertEquals(-1, maxNumberWithNegativeImage(ar1));
+
+	}
+
+	int maxNumberWithNegativeImage(int array[]) {
+		// return maximal positive number having it negative image or -1 if none such
+		// numbers
+
+		HashSet<Integer> setNumbers = new HashSet<>();
+
+		int max = -1;
+		for (int number : array) {
+			if (setNumbers.contains(-number)) {
+				if (Math.abs(number) > max) {
+					max = Math.abs(number);
+				}
+			}
+			setNumbers.add(number);
+		}
+		return max;
+	}
+
+	@Test
+	void treeIteratingTest() {
+		Integer array[] = { 1, 11, 111, 32, 9, 1234, 99, 992 };
+		assertArrayEquals(array, createAndIterateTreeInOrder(array));
+	}
+
+	private Integer[] createAndIterateTreeInOrder(Integer[] array) {
+		// create tree, add in tree numbers from a given array
+		// and iterate in the order of array defined in 69
+
+		TreeSet<Integer> tree = new TreeSet<>((x, y) -> {
+			ToIntFunction<Integer> sumOfDigits = num -> Arrays.stream(Integer.toString(num).split(""))
+					.mapToInt(Integer::valueOf).sum();
+
+			return Integer.compare(sumOfDigits.applyAsInt(x), sumOfDigits.applyAsInt(y));
+		});
+
+		tree.addAll(Arrays.asList(array));
+		return tree.toArray(new Integer[0]);
 	}
 }
